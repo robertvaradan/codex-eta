@@ -26,9 +26,9 @@ failures; ETA does not alter task prompts or gate Codex execution.
 1. Run `codex plugin marketplace add robertvaradan/codex-eta`, or clone this
    repository and run
    `codex plugin marketplace add <path-to-clone>`.
-2. Restart Codex desktop. In Plugins, select **ETA local plugins** and install
-   **ETA**.
-3. Review and trust the ETA hooks. Start a new chat and send a prompt.
+2. Run `codex plugin add eta@eta-local`. Restart Codex desktop.
+3. Use `/hooks` in the Codex CLI to review and trust ETA's three hooks. Start a
+   new Codex desktop chat and send a prompt.
 4. The companion window opens after the first prompt. Drag it near the model
    indicator. The × button closes it until the next prompt.
 
