@@ -21,13 +21,14 @@ def main() -> None:
     data_dir = Path(os.environ["PLUGIN_DATA"])
     data_dir.mkdir(parents=True, exist_ok=True)
     lock = open(data_dir / "eta-window.lock", "a+b")
-    lock.seek(0)
-    lock.write(b"0")
-    lock.flush()
+    if os.fstat(lock.fileno()).st_size == 0:
+        lock.write(b"0")
+        lock.flush()
     lock.seek(0)
     try:
         msvcrt.locking(lock.fileno(), msvcrt.LK_NBLCK, 1)
     except OSError:
+        lock.close()
         return
 
     store = EtaStore(data_dir / "eta.sqlite3")
@@ -71,8 +72,14 @@ def main() -> None:
         try:
             turn = store.current()
             if turn:
-                headline.configure(text=f"~ {clock_text(turn['remaining'])} left")
-                detail.configure(text=f"{clock_text(turn['elapsed'])} elapsed  ·  {turn['samples']} learned turns")
+                if turn["status"] == "waiting":
+                    headline.configure(text="Waiting for agent ETA")
+                elif turn["status"] == "overdue":
+                    headline.configure(text="Awaiting revised ETA")
+                else:
+                    headline.configure(text=f"~ {clock_text(turn['remaining'])} left")
+                source = "agent ETA" if turn["samples"] == 0 else f"agent × {turn['factor']:.2f}"
+                detail.configure(text=f"{clock_text(turn['elapsed'])} elapsed  ·  {source}")
             else:
                 headline.configure(text="Ready for next turn")
                 detail.configure(text="Drag to place beside Codex")
@@ -92,4 +99,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
