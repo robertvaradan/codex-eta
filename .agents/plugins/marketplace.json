@@ -1,0 +1,13 @@
+{
+  "name": "eta-local",
+  "interface": { "displayName": "ETA local plugins" },
+  "plugins": [
+    {
+      "name": "eta",
+      "source": { "source": "local", "path": "./plugins/eta" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Productivity"
+    }
+  ]
+}
+
